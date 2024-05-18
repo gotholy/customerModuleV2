@@ -11,7 +11,7 @@ const addressSchema = new mongoose.Schema({
     street: { type: String, required: true, maxlength: 100 },
     email: { type: String, required: false, maxlength: 50 }
   });
-
+  
 addressSchema.pre('deleteOne', async function (next) {
   try {
     const addressId = this.getQuery()._id;

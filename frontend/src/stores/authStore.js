@@ -23,6 +23,7 @@ export const useAuthStore = defineStore('auth', () => {
         accessToken.value = data.accessToken;
         localStorage.setItem('user', JSON.stringify(data.user))
         localStorage.setItem('access_token', data.accessToken);
+        console.log(data.accessToken);
         return true;
       } else {
         const errorResponse = await response.json();
