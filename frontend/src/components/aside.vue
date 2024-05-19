@@ -1,6 +1,7 @@
 <template>
     <aside class="aside">
-    <h3>firstName lastName</h3>
+    <!-- <h3>{{user.firstName}}{{ user.lastName }}</h3> -->
+    <h3>Name</h3>
     <p>last Login: 13.05.2024, 10:32Uhr </p>
     <h1>Customer CSV Upload</h1>
     <div class="uploadContainer">

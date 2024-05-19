@@ -17,14 +17,27 @@ export const login = async (req, res, next)=> {
 
     user.updated_at = new Date()
     await user.save()
-
+    
     res.cookie("access_token", token, {
       httpOnly: true,
-    }).status(200).json({...otherDetails})
+    }).status(200).json({...otherDetails, token})
   } catch (err) {
     next(err)
   }
 }
+
+export const getLoggedInUser = async (req, res, next) => {
+  console.log('getLoggedUser called');
+  try {
+    const user = await User.findById(req.params.id)
+    if (!user) {
+       return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+  } catch (err) {
+     next(err)
+  }
+};
 
 export const logout = async (req, res, next) => {
   try {
