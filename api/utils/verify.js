@@ -1,24 +1,40 @@
 import jwt from "jsonwebtoken";
+import User from "../models/user.model.js"
+
 import { createError } from "./error.js";
 
 export const verifyToken = (req, res, next)=>{
-    const token = req.cookies.access_token;
-    if(!token){
-        return next(createError(401, "You are not Authenticated"))
+    const authHeader = req.header.authorization || req.header.authorization 
+
+    if(authHeader?.startsWith('Bearer')){
+        const token = authHeader.split(' ')[1]
+
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, decoded) => {
+            if(err){
+                req.user = {};
+                return next(createError(403, "Token is not valid!"));
+            }
+
+            const userFound = await User.findById(decoded.id).select({password: 0, refresh_token: 0}).exec()
+            if (userFound) {
+                req.user = {...userFound.toObject({getters: true})}
+                next()
+            } else {
+                req.user = {}
+                next(createError(403, "User not found!"));
+            }
+        })
+
+    }else{
+        req.user = {}
+        return next()
     }
-    jwt.verify(token,process.env.JWT_SECRET,(err, user)=>{
-        if(err) return next(createError(403, "Token is not valid!"));
-        req.user = user;
-        next()
-    })
 }
 
 export const verifyUser = (req, res, next)=>{
-    verifyToken(req,res,next, ()=> {
-        if(req.user.id === req.params.id){
+        if(req.user?.id ){
             next()
         } else {
             return next(createError(403, "You are not authorized!"));
         }
-    })
 }

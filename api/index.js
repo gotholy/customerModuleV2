@@ -8,6 +8,7 @@ import customerRoute from "./routes/customer.routes.js"
 import adressRoute from "./routes/adress.routes.js"
 import contactPersonRoute from "./routes/contactPerson.routes.js"
 import userRoute from "./routes/user.js"
+import { verifyToken } from "./utils/verify.js"
 
 const app = express()
 
@@ -29,6 +30,7 @@ mongoose.connection.on("disconnected", ()=> {
 app.use(cookieParser())
 app.use(express.json())
 app.use(cors({credentials: true, origin: process.env.ALLOWED_ORIGIN}))
+app.use(verifyToken)
 
 app.use("/api/auth", authRoute)
 app.use("/api/user", userRoute)
