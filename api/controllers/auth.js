@@ -14,17 +14,30 @@ export const login = async (req, res, next)=> {
     
     const token = jwt.sign({ id: user._id}, process.env.JWT_SECRET, { expiresIn: '1h' })
     const { password ,...otherDetails } = user._doc;
-
+    
     user.updated_at = new Date()
     await user.save()
-
+    
     res.cookie("access_token", token, {
       httpOnly: true,
     }).status(200).json({...otherDetails})
   } catch (err) {
     next(err)
   }
-}
+};
+
+export const getUserById = async (req, res) => {
+  console.log('getLoggedInUser called');
+  try {
+    const user = await User.findById(req.params.id)
+    if (!user) {
+       return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+     res.status(500).json({ message: error.message });
+  }
+};
 
 export const logout = async (req, res, next) => {
   try {
@@ -48,4 +61,5 @@ export const register = async (req, res, next) => {
     next(error);
   }
 };
+
 
