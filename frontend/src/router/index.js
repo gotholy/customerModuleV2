@@ -17,8 +17,8 @@ const router = createRouter({
       component: HomeView,
       beforeEnter: async (to, from, next) => {
         const authStore = useAuthStore()
-        const accessToken = authStore.getAccessToken();
-        if (!accessToken) {
+        const access = authStore.user
+        if (!access) {
           return next({ name: 'login' })
         }
         next()
