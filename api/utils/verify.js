@@ -3,7 +3,7 @@ import User from "../models/user.model.js"
 
 import { createError } from "./error.js";
 
-export const verifyToken = (req, res, next)=>{
+export const authentication = (req, res, next)=>{
     const authHeader = req.header.authorization || req.header.authorization 
 
     if(authHeader?.startsWith('Bearer')){
@@ -32,7 +32,7 @@ export const verifyToken = (req, res, next)=>{
 }
 
 export const verifyUser = (req, res, next)=>{
-        if(req.user?.id ){
+        if(req.userFound?.id ){
             next()
         } else {
             return next(createError(403, "You are not authorized!"));

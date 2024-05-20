@@ -17,7 +17,6 @@ export const login = async (req, res, next)=> {
     const refreshToken = jwt.sign({id: user.id},process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '1d'})
 
     user.refresh_token = refreshToken
-    user.updated_at = new Date()
     await user.save()
 
     res.cookie('refresh_token', refreshToken, {httpOnly: true, sameSite: 'None', secure: true, maxAge: 24*60*60*1000})
@@ -28,10 +27,8 @@ export const login = async (req, res, next)=> {
 }
 
 export const getLoggedInUser = async (req, res, next) => {
-  console.log('getLoggedInUser called');
   try {
     const user = req.user
-    console.log(user);
     return res.status(200).json(user)
   } catch (err) {
      next(err)
@@ -42,19 +39,19 @@ export const logout = async (req, res, next) => {
   try {
     const cookies = req.cookies
     if(!cookies.refreshToken){
-        return res.sendStatus(204)
+        return res.status(200).json('zeile44')
     } 
     const refreshToken = cookies.refresh_token
     const user = await User.findOne({refresh_token: refreshToken}).exec()
     if(!user){
       res.clearCookie('refresh_token', {httpOnly: true, sameSite: 'None', secure: true})
-      return res.sendStatus(204)
+      return res.sendStatus(200)
     }
 
     user.refresh_token = null
     await user.save()
     res.clearCookie('refresh_token', {httpOnly: true, sameSite: 'None', secure: true})
-    res.status(204)
+    res.status(200).json('Logout done')
   } catch (err) {
     next(err);
   }
