@@ -5,24 +5,47 @@ import jwt from "jsonwebtoken";
 
 export const login = async (req, res, next)=> {
   try {
-      
-    const user = await User.findOne({email: req.body.email})
+    const {email, password} = req.body
+    const user = await User.findOne({email})
     if (!user) return next(createError(404,"User not found"))
       
-    const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password)
+    const isPasswordCorrect = await bcrypt.compare(password, user.password)
     if (!isPasswordCorrect) return next(createError(400, "Wrong password or username"))
     
     const token = jwt.sign({ id: user._id}, process.env.JWT_SECRET, { expiresIn: '1h' })
-    const { password ,...otherDetails } = user._doc;
+    const { password: hashPassword, ...userData } = user._doc;
 
-    user.updated_at = new Date()
     await user.save()
 
     res.cookie("access_token", token, {
       httpOnly: true,
-    }).status(200).json({...otherDetails})
+    }).status(200).json({message: "success", data: userData})
   } catch (err) {
     next(err)
+  }
+}
+export const getLoggedInUser = async (req,res,next)=>{
+  try {
+    const token = req.cookies.access_token;
+    if (!token) {
+      return next(createError(401, "You are not Authenticated"));
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
+
+    const user = await User.findOne(
+      { _id: userId },
+      { firstName: 1, lastName: 1, registrationDate: 1 }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ message: "success", data: user });
+  } catch (error) {
+     res.status(500).json({ message: error.message });
   }
 }
 
