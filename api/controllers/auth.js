@@ -6,21 +6,59 @@ import jwt from "jsonwebtoken";
 export const login = async (req, res, next)=> {
   try {
     const {email, password } = req.body
-    const user = await User.findOne({email: req.body.email}).exec()
-    if (!user) return next(createError(404,"User not found"))
-    if(!email || !password) return next(createError(422, "Invalid Inputs"))
-      
-    const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password)
-    if (!isPasswordCorrect) return next(createError(400, "Wrong password or username"))
-    
-    const accessToken = jwt.sign({ id: user._id}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
-    const refreshToken = jwt.sign({id: user.id},process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '1d'})
 
+    if(!email || !password) return res.status(422).json({'message': 'Invalid fields'})
+    
+    const user = await User.findOne({email}).exec()
+  
+    if(!user) return res.status(401).json({message: "Email or password is incorrect"})
+  
+    const match = await bcrypt.compare(password, user.password)
+  
+    if(!match) return res.status(401).json({message: "Email or password is incorrect"})
+  
+    const accessToken = jwt.sign(
+      {
+        id: user.id
+      },
+      process.env.ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: '1800s'
+      }
+    )
+  
+    const refreshToken = jwt.sign(
+      {
+        id: user.id
+      },
+      process.env.REFRESH_TOKEN_SECRET,
+      {
+        expiresIn: '1d'
+      }
+    )
+  
     user.refresh_token = refreshToken
     await user.save()
-
+  
     res.cookie('refresh_token', refreshToken, {httpOnly: true, sameSite: 'None', secure: true, maxAge: 24*60*60*1000})
     res.json({access_token: accessToken})
+    // const {email, password } = req.body
+    // const user = await User.findOne({email: req.body.email}).exec()
+    // if (!user) return next(createError(404,"User not found"))
+    // if(!email || !password) return next(createError(422, "Invalid Inputs"))
+      
+    // const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password)
+    // if (!isPasswordCorrect) return next(createError(400, "Wrong password or username"))
+    
+    // const accessToken = jwt.sign({ id: user._id}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+    // const refreshToken = jwt.sign({id: user.id},process.env.REFRESH_TOKEN_SECRET,{ expiresIn: '1d'})
+
+    // user.refresh_token = refreshToken
+    // await user.save()
+
+    // res.cookie('refresh_token', refreshToken, {httpOnly: true, sameSite: 'None', secure: true, maxAge: 24*60*60*1000})
+    // res.json({access_token: accessToken})
+
   } catch (err) {
     next(err)
   }
@@ -36,11 +74,12 @@ export const getLoggedInUser = async (req, res, next) => {
 };
 
 export const logout = async (req, res, next) => {
+  console.log('logout called');
   try {
     const cookies = req.cookies
-    if(!cookies.refreshToken){
-        return res.status(200).json('zeile44')
-    } 
+    console.log(cookies);
+    if(!cookies.refreshToken)return res.status(204)
+    
     const refreshToken = cookies.refresh_token
     const user = await User.findOne({refresh_token: refreshToken}).exec()
     if(!user){
