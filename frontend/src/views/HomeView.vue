@@ -1,11 +1,12 @@
 <template>
   <div class="container">
-    <aside class="aside">
+    <h1>Home Page</h1>
+    <!-- <aside class="aside">
       <Aside />
     </aside>
     <main class="main">
       <Main />
-    </main>
+    </main> -->
   </div>
 </template>
 

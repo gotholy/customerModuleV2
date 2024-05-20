@@ -1,4 +1,11 @@
+import { createError } from "./error.js";
+
+
 export const auth= (req,res,next)=>{
-    if(req.user?.id) return next()
-    return res.sendStatus(401)
+    console.log(req.user);
+    if(req.user?.id ){
+        next()
+    } else {
+        return next(createError(403, "You are not authorized!"));
+    }
 }

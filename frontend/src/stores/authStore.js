@@ -1,11 +1,23 @@
 import { defineStore } from 'pinia'
 
-export const useAuthStore = defineStore({
-  id: 'auth',
+export const useAuthStore = defineStore("auth", {
   state: () => ({
-    user: {},
-    accessToken: null
+    user: {
+      id: 0,
+      username: "",
+      email: "",
+      first_name: "",
+      last_name: "",
+      full_name: "",
+    },
+    accessToken: "",
+    authReady: false,
   }),
+
+  getters: {
+    userDetail: (state) => state.user,
+    isAuthenticated: (state) => !!state.accessToken,
+  },
   actions: {
     async login(email, password) {
       try {
@@ -19,9 +31,9 @@ export const useAuthStore = defineStore({
       }catch (error) {
       }
     },
-    async fetchUserById(id) {
+    async getUser() {
       try {
-        // const {data} = await fetch(`http://localhost:7777/api/auth/user/${id}`, {
+        // const {data} = await fetch(`http://localhost:7777/api/auth/actualUser`, {
         //   method: 'GET',
         //   headers: {
         //     'Authorization': `Bearer ${this.accessToken}`
@@ -34,6 +46,11 @@ export const useAuthStore = defineStore({
       // await fetch('http://localhost:7777/api/auth/logout', {
       //           method: 'POST',
       //         });
-    }
+    },
+    async refresh(){
+      // await fetch('http://localhost:7777/api/auth/logout', {
+      //           method: 'POST',
+      //         });
+    },
   },
 })

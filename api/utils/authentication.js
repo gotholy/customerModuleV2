@@ -2,33 +2,29 @@ import jwt from 'jsonwebtoken'
 import User from '../models/user.model.js'
 
 export const authentication = (req, res, next)=>{
-  console.log('authentication called');
-    const authHeader = req.headers.authorization || req.headers.Authorization
+  const authHeader = req.header.authorization || req.header.authorization 
 
-    if(authHeader?.startsWith('Bearer')) {
-  
+  if(authHeader?.startsWith('Bearer')){
       const token = authHeader.split(' ')[1]
-  
+
       jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, decoded) => {
-        if(err){
-          req.user = {}
-          return next()
-        }
-  
-        const user = await User.findById(decoded.id).select({ password: 0, refresh_token: 0 }).exec()
-  
-        if(user){
-          req.user = user.toObject({ getters: true })
-        }else{
-          req.user = {}
-        }
-  
-        return next()
-  
+          if(err){
+              req.user = {};
+              return next(createError(403, "Token is not valid!"));
+          }
+
+          const userFound = await User.findById(decoded.id).select({password: 0, refresh_token: 0}).exec()
+          if (userFound) {
+              req.user = {...userFound.toObject({getters: true})}
+              next()
+          } else {
+              req.user = {}
+              next(createError(403, "User not found!"));
+          }
       })
-  
-    }else{
+
+  }else{
       req.user = {}
       return next()
-    }
   }
+}
