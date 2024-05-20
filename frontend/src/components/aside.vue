@@ -21,9 +21,15 @@
 <script setup>
 import { useAuthStore } from '../stores/authStore.js';
 import router from '../router/index.js';
+import { ref } from 'vue';
 
 const authStore = useAuthStore();
-// const user = authStore.user
+const user = ref(null);
+async function mounted() {
+  if (authStore.token) {
+    user.value = await authStore.getLoggedInUser();
+  }
+}
 
 const logout = async () => {
   await authStore.logout();
