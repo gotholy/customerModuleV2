@@ -86,7 +86,7 @@ export const logout = async (req, res, next) => {
 
   export const getLoggedInUser = async (req, res, next) => {
     try {
-      const user = req.user
+      const user = req.userFound
       return res.status(200).json(user)
     } catch (err) {
        next(err)
