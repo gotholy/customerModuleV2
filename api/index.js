@@ -8,6 +8,9 @@ import customerRoute from "./routes/customer.routes.js"
 import adressRoute from "./routes/adress.routes.js"
 import contactPersonRoute from "./routes/contactPerson.routes.js"
 import userRoute from "./routes/user.js"
+import { authentication } from "./utils/verify.js"
+import { corsOptions } from "./utils/cors.js"
+import { credentials } from "./utils/credentials.js"
 
 const app = express()
 
@@ -26,15 +29,27 @@ mongoose.connection.on("disconnected", ()=> {
 })
 
 //middlewares
-app.use(cookieParser())
+app.use(credentials)
+app.use(cors(corsOptions))
+app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
-app.use(cors({credentials: true, origin: process.env.ALLOWED_ORIGIN}))
+app.use(cookieParser())
+app.use(authentication)
 
 app.use("/api/auth", authRoute)
 app.use("/api/user", userRoute)
 app.use("/api/customer", customerRoute)
 app.use("/api/address", adressRoute)
 app.use("/api/contact-person", contactPersonRoute)
+app.all('*', (req, res) => {
+    res.status(404)
+  
+    if(req.accepts('json')){
+      res.json({'error': '404 Not Found'})
+    }else{
+      res.type('text').send('404 Not Found')
+    }
+  })
 
 app.use((err, req, res, next)=>{
     const errorStatus = err.status || 500

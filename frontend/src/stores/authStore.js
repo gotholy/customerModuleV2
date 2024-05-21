@@ -1,76 +1,56 @@
-import { defineStore } from 'pinia';
+import { defineStore } from 'pinia'
 
-export const useAuthStore = defineStore('auth', {
+export const useAuthStore = defineStore("auth", {
   state: () => ({
-    user: null,
-    token: null
+    user: {
+      id: 0,
+      username: "",
+      email: "",
+      first_name: "",
+      last_name: "",
+      full_name: "",
+    },
+    accessToken: "",
+    authReady: false,
   }),
+
+  getters: {
+    userDetail: (state) => state.user,
+    isAuthenticated: (state) => !!state.accessToken,
+  },
   actions: {
     async login(email, password) {
       try {
-        const response = await fetch('http://localhost:7777/api/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, password }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          this.user = data;
-          this.token = data.token;
-          console.log(data.token);
-          return true;
-        } else {
-          const errorResponse = await response.json();
-          throw new Error(errorResponse.message);
-        }
-      } catch (error) {
-        console.error('Login error:', error);
-        throw error;
+        // const response = await fetch('http://localhost:7777/api/auth/login', {
+        //   method: 'POST',
+        //   headers: {
+        //     'Content-Type': 'application/json'
+        //   },
+        //   body: JSON.stringify({ email, password })
+        // })
+      }catch (error) {
       }
     },
-    async getLoggedInUser() {
-      console.log('getLoggedInUserCalled');
+    async getUser() {
       try {
-        const token = this.token; // get the token from the store state
-        console.log(token,'token getLoggedInUserCalled');
-        if (!token) {
-          throw new Error("No token found in the store");
-        }
-
-        const response = await fetch('http://localhost:7777/api/auth/actualUser', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}` // add the token to the headers
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          this.user = data;
-          return data;
-        } else {
-          const errorResponse = await response.json();
-          throw new Error(errorResponse.message);
-        }
-      } catch (error) {
-        console.error('Error fetching logged-in user:', error);
-        throw error;
+        // const {data} = await fetch(`http://localhost:7777/api/auth/actualUser`, {
+        //   method: 'GET',
+        //   headers: {
+        //     'Authorization': `Bearer ${this.accessToken}`
+        //   }
+        // });
+      } catch (error) { 
       }
     },
-    async logout() {
-      try {
-        await fetch('http://localhost:7777/api/auth/logout', {
-          method: 'POST',
-        });
-        this.user = null;
-        this.accessToken = null;
-      } catch (error) {
-        console.error(`Logout Error`, error);
-      }
+    async logout(){
+      // await fetch('http://localhost:7777/api/auth/logout', {
+      //           method: 'POST',
+      //         });
+    },
+    async refresh(){
+      // await fetch('http://localhost:7777/api/auth/logout', {
+      //           method: 'POST',
+      //         });
     },
   },
-});
+})

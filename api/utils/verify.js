@@ -1,47 +1,49 @@
 import jwt from "jsonwebtoken";
+import User from "../models/user.model.js"
 import { createError } from "./error.js"
-import User from "../models/user.model.js";
 
-export const verifyToken = (req, res, next)=>{
-    const token = req.cookies.access_token;
-    if(!token){
-        return next(createError(401, "You are not Authenticated"))
+
+import { createError } from "./error.js";
+export const authentication = (req, res, next)=>{
+    console.log("Authenticating request...")
+    const authHeader = req.header("authorization") || req.header("Authorization");
+    console.log("authHeader: ", authHeader)
+  
+    if(authHeader?.startsWith('Bearer')){
+        const token = authHeader.split(' ')[1]
+        console.log("Token: ", token)
+  
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, decoded) => {
+            console.log("Decoded: ", decoded)
+            if(err){
+                console.log("Error while verifying token: ", err)
+                req.user = {};
+                return next(createError(403, "Token is not valid!"));
+            }
+  
+            const userFound = await User.findById(decoded.id).select({password: 0, refresh_token: 0}).exec()
+            if (userFound) {
+                console.log("User found: ", userFound)
+                req.userFound = {...userFound.toObject({getters: true})}
+                next()
+            } else {
+                console.log("User not found in database")
+                req.userFound = {}
+                next(createError(403, "User not found!"));
+            }
+        })
+  
+    }else{
+        console.log("No Bearer token found in request headers")
+        req.userFound = {}
+        return next()
     }
-    jwt.verify(token,process.env.JWT_SECRET,(err, user)=>{
-        if(err) return next(createError(403, "Token is not valid!"));
-        req.user = user;
-        next()
-    })
 }
 
 export const verifyUser = (req, res, next)=>{
-    verifyToken(req,res,next, ()=> {
-        if(req.user.id === req.params.id){
+        if(req.userFound?.id ){
             next()
         } else {
             return next(createError(403, "You are not authorized!"));
-        }
-    })
-}
-
-
-
-export const requireLoggin = (req, res, next)=>{
-    const token = req.cookies.access_token;
-    if (token) {
-        try {
-            const _id = jwt.verify(token, process.env.JWT_SECRET).payload;
-            User.findOne({_id})
-                .then(next())
-                .catch((err) => {
-                    console.log(err);
-                    return res.status(401).json({message: "error", code: "unauthenticated-access"});
-                })
-        } catch (error) {
-            console.log(error);
-            return res.status(400).json({message: "error", code: "token-expired", error});
-        }
-    } else {
-        return res.status(401).json({message: "error", code: "unauthenticated-access"});
-    }
+     }
 }
