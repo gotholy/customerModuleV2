@@ -1,8 +1,13 @@
 <template>
     <aside class="aside">
-    <h3>firstName lastName</h3>
-    <p>last Login: 13.05.2024, 10:32Uhr </p>
-    <h1>Customer CSV Upload</h1>
+      <template v-if="isAuthenticated">
+      <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+      <p>Letzter Login: 13.05.2024, 10:32 Uhr</p>
+    </template>
+    <template v-else>
+      <p>Bitte melden Sie sich an, um auf diese Seite zuzugreifen.</p>
+      <button type="button" class="btn" @click="login">Login</button>
+    </template>
     <div class="uploadContainer">
         <div class="uploadBtnContainer">
             <button type="button" class="btn">Upload Customer</button>
@@ -20,21 +25,32 @@
 
 <script setup>
 import { useAuthStore } from '../stores/authStore.js';
+import { computed } from 'vue';
 import router from '../router/index.js';
-import { ref } from 'vue';
+
 
 const authStore = useAuthStore();
-const user = ref(null);
-async function mounted() {
-  if (authStore.token) {
-    user.value = await authStore.getLoggedInUser();
-  }
-}
+
+const user = computed(()=>{
+  return authStore.user
+})
+const isAuthenticated = computed(()=>{
+  return authStore.isAuthenticated
+})
+
 
 const logout = async () => {
-  await authStore.logout();
-  router.push({ name: 'login' })
-
+  try {
+    await authStore.logout()
+    .then( res => {
+      router.push({ name: 'login' })
+    })
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+const login = () => {
+  router.push({ name: 'login' });
 };
 </script>
 

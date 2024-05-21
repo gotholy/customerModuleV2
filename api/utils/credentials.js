@@ -1,9 +1,11 @@
+import { allowedOrigins } from "./allowed_origins.js";
+
 export const credentials = (req, res, next) => {
     const origin = req.headers.origin
   
-    if(process.env.ALLOWED_ORIGIN.includes(origin)){
-      res.header('Access-Control-Allow-Origin', true)
-      res.header('Access-Control-Allow-Credentials', true)
+    if(allowedOrigins.includes(origin)){
+      res.header('Access-Control-Allow-Origin', origin);
+      res.header('Access-Control-Allow-Credentials', true);
     }
   
     next()

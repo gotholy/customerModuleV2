@@ -11,18 +11,31 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView,
+      meta: {requiresGuest: true}
     },
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: HomeView
+      // Remove the requiresGuest meta property from the home route
     },
     {
       path: '/user',
       name: 'user',
       component: UserView,
+      meta: {requiresAuth: true}
     },
   ],
+})
+
+router.beforeEach((to, from) => {
+  const store = useAuthStore(); 
+  if(to.meta.requiresAuth && !store.isAuthenticated){
+    return {name: 'login'}
+  }else if(to.meta.requiresGuest && store.isAuthenticated){
+    // Only redirect authenticated users to the home page if they're trying to access a route that requires a guest
+    return {name: 'home'}
+  }
 })
 
 export default router

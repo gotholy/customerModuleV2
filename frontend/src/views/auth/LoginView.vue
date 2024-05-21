@@ -5,48 +5,45 @@
           <h5 class="card-title">Sell Cars</h5>
           <form @submit.prevent="handleSubmit">
             <div class="mb-3">
-            <input type="email" class="form-control" id="email" v-model="email" placeholder="Username">
+            <input v-model="loginData.email" type="email" class="form-control" id="email"  placeholder="Username">
           </div>
           <div class="mb-3">
-            <input type="password" class="form-control" id="password" v-model="password" placeholder="Password">
+            <input v-model="loginData.password" type="password" class="form-control" id="password" placeholder="Password">
           </div>
             <div class="btn-container">
                 <button type="submit" class="btn">Login</button>
             </div>
-            <div class="error" v-if="error">{{ error }}</div>
+            <div class="error" v-if="errorMessage">{{ errorMessage }}</div>
           </form>
         </div>
       </div>
     </div>
   </template>
   
-  <script>
-  import { useAuthStore } from '../../stores/authStore.js'
-  
-  export default {
-    data() {
-      return {
-        email: '',
-        password: '',
-        error: null
-      }
-    },
-    methods: {
-      async handleSubmit() {
-        
-        try {
-        const authStore = useAuthStore()
-        const success = await authStore.login(this.email, this.password)
-        if (success) {
-          this.$router.push({ name: 'home' })
-        }
-      } catch (error) {
-        this.error = error.message;
-      }
-      }
-    }
+<script setup>
+  import { useAuthStore } from '../../stores/authStore.js';
+  import { reactive, ref } from 'vue';
+  import { useRouter } from 'vue-router';
+
+  const authStore = useAuthStore()
+  const router = useRouter()
+  const loginData = reactive({
+    email: "",
+    password: "",
+  })
+
+  let errorMessage = ref("")
+
+  async function handleSubmit(){
+  try {
+    await authStore.login(loginData)
+    router.replace({name: "user"})
+  } catch(error) {
+    errorMessage.value = error.message
   }
+}
 </script>
+  
 
 <style scoped>
 #login{

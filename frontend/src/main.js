@@ -1,18 +1,18 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import VueCookie from 'vue-cookies'
+import { authentication } from './plugins/authentication.js'
 
 import App from './App.vue'
-import router from './router'
+import router from './router/index.js'
 
-import "bootstrap/dist/css/bootstrap.min.css"
-import "bootstrap"
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap";
 
-const pinia = createPinia();
 const app = createApp(App);
 
-app.use(pinia)
-app.use(router)
-app.use(VueCookie)
+app.use(createPinia())
 
-app.mount('#app')
+authentication.install().then(() => {
+  app.use(router)
+  app.mount('#app')
+})
