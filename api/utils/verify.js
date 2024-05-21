@@ -1,9 +1,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js"
-import { createError } from "./error.js"
-
-
 import { createError } from "./error.js";
+
 export const authentication = (req, res, next)=>{
     console.log("Authenticating request...")
     const authHeader = req.header("authorization") || req.header("Authorization");
@@ -45,5 +43,5 @@ export const verifyUser = (req, res, next)=>{
             next()
         } else {
             return next(createError(403, "You are not authorized!"));
-     }
+        }
 }

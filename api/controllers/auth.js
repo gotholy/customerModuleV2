@@ -47,30 +47,6 @@ export const login = async (req, res, next)=> {
     next(err)
   }
 }
-export const getLoggedInUser = async (req,res,next)=>{
-  try {
-    const token = req.cookies.access_token;
-    if (!token) {
-      return next(createError(401, "You are not Authenticated"));
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.id;
-
-    const user = await User.findOne(
-      { _id: userId },
-      { firstName: 1, lastName: 1, registrationDate: 1 }
-    );
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    res.json({ message: "success", data: user });
-  } catch (error) {
-     res.status(500).json({ message: error.message });
-  }
-}
 
 export const logout = async (req, res, next) => {
     console.log('logout called');
@@ -107,15 +83,15 @@ export const logout = async (req, res, next) => {
     }
   };
 
-export const getLoggedInUser = async (req, res, next) => {
-  try {
-    const user = req.user
-    return res.status(200).json(user)
-  } catch (err) {
-     next(err)
-  }
-};
 
+  export const getLoggedInUser = async (req, res, next) => {
+    try {
+      const user = req.user
+      return res.status(200).json(user)
+    } catch (err) {
+       next(err)
+    }
+  };
 
 export const refresh = async (req, res, next) => {
   try {
