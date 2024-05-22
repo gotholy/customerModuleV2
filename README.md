@@ -1,7 +1,9 @@
 Beschreibung
+
 Das CustomerModul ist eine Anwendung zur Verwaltung von Kundeninformationen. Es besteht aus drei Hauptkomponenten: der Datenbank, dem Server und dem Frontend. Die Datenbank wird von MongoDB bereitgestellt, der Server ist eine Node.js-Anwendung und das Frontend ist eine Vue.js-Anwendung.
 
 Installation
+
 Um das CustomerModul auszuführen, müssen Sie zunächst Docker und Docker Compose auf Ihrem System installieren. Anschließend können Sie die folgenden Schritte ausführen:
 
 Klonen Sie dieses Repository auf Ihren lokalen Computer:
@@ -29,6 +31,7 @@ Sie sollten nun die Startseite des CustomerModuls sehen.
 Eine Register Page gibt es nicht. Die erste Registrierung eines Users muss über Postman/Thunderclient oder ähnlichen durchgeführt werden. 
 
 Technologien
+
 Das CustomerModul wurde mit den folgenden Technologien erstellt:
 
 MongoDB: Die Datenbank zur Speicherung von Kundeninformationen.
