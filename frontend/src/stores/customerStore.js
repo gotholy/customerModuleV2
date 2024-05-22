@@ -12,6 +12,18 @@ export const useCustomerStore = defineStore("customer", {
     getCustomerById: (state) => (id) => state.customers.find(customer => customer.id === id),
   },
   actions: {
+    async updateCustomer(updateCustomerData) {
+      try {
+        const {data} = await useApi().post(`/updateCustomer/${this.customer_id}`, updateCustomerData);
+        this.customer = data
+      }catch (error) {
+        if (error.response) {
+          throw new Error(error.response.data.message);
+        } else {
+          throw error;
+        }
+      }
+    },
     async fetchCustomers() {
       try {
         this.loading = true;

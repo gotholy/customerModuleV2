@@ -1,0 +1,13 @@
+intnr,type,contact_persons.first_name,contact_persons.last_name,contact_persons.email,contact_persons.mobile_phone,contact_persons.birth_date,addresses.company_name,addresses.country,addresses.city,addresses.zip,addresses.fax,addresses.phone,addresses.street,addresses.email
+123,PRIVATE,John,Doe,john.doe@example.com,123456789,1980-01-01,ABC Company,USA,New York,10001,555-1234,555-5678,123 Main St,john.doe@example.com
+456,COMPANY,Jane,Doe,jane.doe@example.com,987654321,1990-02-02,XYZ Inc,USA,Los Angeles,90001,555-8765,555-4321,456 Elm St,jane.doe@example.com
+789,DEALER,Jake,Smith,jake.smith@example.com,111222333,2000-03-03,Acme Co,USA,Chicago,60601,555-3210,555-9876,789 Oak St,jake.smith@example.com
+101,PRIVATE,Mary,Johnson,mary.johnson@example.com,444555666,1985-05-05,Smith & Sons,USA,San Francisco,94102,555-9999,555-1111,101 Pine St,mary.johnson@example.com
+202,COMPANY,David,Williams,david.williams@example.com,777888999,1975-06-06,Williams Ltd,USA,Houston,77002,555-4444,555-2222,202 Maple St,david.williams@example.com
+303,DEALER,Sarah,Brown,sarah.brown@example.com,333444555,1995-07-07,Brown Enterprises,USA,Miami,33101,555-7777,555-3333,303 Oak St,sarah.brown@example.com
+404,PRIVATE,Michael,Jones,michael.jones@example.com,222333444,1982-08-08,Jones Co,USA,Dallas,75201,555-6666,555-4444,404 Elm St,michael.jones@example.com
+505,COMPANY,Emily,Miller,emily.miller@example.com,666777888,1992-09-09,Miller Corp,USA,Seattle,98101,555-3333,555-5555,505 Cedar St,emily.miller@example.com
+606,DEALER,Chris,Anderson,chris.anderson@example.com,555666777,1988-10-10,Anderson Industries,USA,Denver,80202,555-2222,555-6666,606 Pine St,chris.anderson@example.com
+707,PRIVATE,Amanda,Davis,amanda.davis@example.com,888999000,1978-11-11,Davis Enterprises,USA,Portland,97201,555-1111,555-7777,707 Maple St,amanda.davis@example.com
+808,COMPANY,Ryan,Wilson,ryan.wilson@example.com,999000111,1989-12-12,Wilson Group,USA,Atlanta,30301,555-0000,555-8888,808 Oak St,ryan.wilson@example.com
+909,DEALER,Kelly,Clark,kelly.clark@example.com,123456789,1993-01-13,Clark Holdings,USA,Boston,02101,555-9999,555-1111,909 Elm St,kelly.clark@example.com

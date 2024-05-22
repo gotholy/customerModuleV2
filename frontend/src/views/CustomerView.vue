@@ -6,25 +6,31 @@
                 <h2>Customers</h2>
                 <div class="mb-3">
                   <label for="formGroupExampleInput" class="form-label"></label>
-                  <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Search for Costumer">
-                 </div>
+                  <input type="text" class="form-control" id="formGroupExampleInput" v-model="searchQuery" placeholder="Suche nach Kunden">
+                </div>
                 <div v-if="loading">Loading customers...</div>
                 <div v-else-if="error" class="error-message">Error: {{ error }}</div>
                 <table v-else class="table">
                     <thead>
                         <tr>
-                        <th scope="col">Interne Nummer</th>
-                        <th scope="col">Vorname</th>
-                        <th scope="col">Nachname</th>
-                        <th scope="col">Firmenname</th>
-                        <th scope="col">Land</th>
-                        <th scope="col">PLZ/Ort</th>
-                        <th scope="col">Adresse</th>
-                        <th>Delete/Detail</th>
+                          <th scope="col" @click="sort('intnr')"># 
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sort-numeric-down" viewBox="0 0 16 16">
+                          <path d="M12.438 1.668V7H11.39V2.684h-.051l-1.211.859v-.969l1.262-.906h1.046z"/>
+                          <path fill-rule="evenodd" d="M11.36 14.098c-1.137 0-1.708-.657-1.762-1.278h1.004c.058.223.343.45.773.45.824 0 1.164-.829 1.133-1.856h-.059c-.148.39-.57.742-1.261.742-.91 0-1.72-.613-1.72-1.758 0-1.148.848-1.835 1.973-1.835 1.09 0 2.063.636 2.063 2.687 0 1.867-.723 2.848-2.145 2.848zm.062-2.735c.504 0 .933-.336.933-.972 0-.633-.398-1.008-.94-1.008-.52 0-.927.375-.927 1 0 .64.418.98.934.98"/>
+                          <path d="M4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z"/>  
+                          </svg>
+                          </th>
+                          <th scope="col" @click="sort('first_name')">First name</th>
+                          <th scope="col" @click="sort('last_name')">Last name</th>
+                          <th scope="col" @click="sort('company_name')">Company name</th>
+                          <th scope="col" @click="sort('country')">Country</th>
+                          <th scope="col" @click="sort('zip')">PLZ/Ort</th>
+                          <th scope="col" @click="sort('street')">Adresse</th>
+                          <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="customer in customers" :key="customer._id">
+                        <tr v-for="customer in filteredCustomers" :key="customer._id">
                         <td>{{ customer.intnr }}</td>
                         <td>{{ customer.contact_persons[0].first_name }}</td>
                         <td>{{ customer.contact_persons[0].last_name }}</td>
@@ -78,6 +84,8 @@ import {Modal} from 'bootstrap'
 import Aside from '../components/aside.vue'
 import { useCustomerStore } from '../stores/customerStore'
 import { computed, onMounted, ref, nextTick } from 'vue'
+import { sortCustomers } from '../utils/sort.js'
+
 
 const customerStore = useCustomerStore()
 
@@ -87,6 +95,25 @@ const error = computed(() => customerStore.error)
 
 const customerIdToDelete = ref(null)
 
+const searchQuery = ref('')
+
+function searchCustomers() {
+  const filteredCustomers = customers.value.filter(customer => {
+    const searchString = searchQuery.value.toLowerCase()
+    return (
+      customer.intnr.toString().includes(searchString) ||
+      customer.contact_persons[0].first_name.toLowerCase().includes(searchString) ||
+      customer.contact_persons[0].last_name.toLowerCase().includes(searchString) ||
+      customer.addresses[0].company_name.toLowerCase().includes(searchString) ||
+      customer.addresses[0].country.toLowerCase().includes(searchString) ||
+      customer.addresses[0].zip.toString().includes(searchString) ||
+      customer.addresses[0].street.toLowerCase().includes(searchString)
+    )
+  })
+  return filteredCustomers
+}
+
+const filteredCustomers = computed(() => searchCustomers())
 async function getCustomers() {
   await customerStore.fetchCustomers()
 }
@@ -104,9 +131,25 @@ function showConfirmDeleteModal(id) {
   })
 }
 
+const sortKey = ref('intnr')
+const sortOrders = ref({
+  intnr: 'asc',
+  first_name: 'asc',
+  last_name: 'asc',
+  company_name: 'asc',
+  country: 'asc',
+  zip: 'asc',
+  street: 'asc'
+})
+
+function sort(key) {
+  sortCustomers(key, customers.value, sortOrders.value)
+}
+
 onMounted(async () => {
     await getCustomers()
 })
+
 </script>
 
 <style scoped> 
@@ -123,7 +166,7 @@ onMounted(async () => {
 .section{ 
     background-color: aliceblue; 
     width: 100vw; 
-    padding: 4vh 2vw;
+    padding: 5vh 2vw;
     display: flex;
     flex-direction: column;
     margin-bottom: 10vh;
@@ -134,5 +177,8 @@ onMounted(async () => {
 .deleteAndDetail{
     display: flex;
     gap: 1vw;
+}
+span{
+  font-size: 0.5rem;
 }
 </style>

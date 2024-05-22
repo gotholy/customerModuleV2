@@ -63,11 +63,12 @@ const uploadContacts = (files) => {
   height: 94vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
+
 }
 .customerTitle{
   font-size: 1.4rem;
   color: aliceblue;
+  margin-left: 1vw;
 }
 .uploadBtnContainer{
   display: flex;
