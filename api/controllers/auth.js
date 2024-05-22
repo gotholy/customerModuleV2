@@ -1,6 +1,5 @@
 import User from "../models/user.model.js"
 import bcrypt from "bcryptjs"
-import { createError } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
 export const login = async (req, res, next)=> {
@@ -56,17 +55,14 @@ export const logout = async (req, res, next) => {
       const cookies = req.cookies
   
       if(!cookies.refresh_token) {
-        console.log('No refresh token found in cookies');
         return res.sendStatus(204);
       }
   
       const refreshToken = cookies.refresh_token;
-      console.log('Refresh token:', refreshToken);
   
       const user = await User.findOne({refresh_token: refreshToken}).exec();
   
       if(!user){
-        console.log('User not found');
         res.clearCookie('refresh_token', {httpOnly: true, sameSite: 'None', secure: true});
         return res.sendStatus(204);
       }
@@ -75,7 +71,6 @@ export const logout = async (req, res, next) => {
       await user.save();
   
       res.clearCookie('refresh_token', {httpOnly: true, sameSite: 'None', secure: true});
-      console.log('Refresh token cleared from cookies');
       res.sendStatus(204);
     } catch (err) {
       console.log('Error:', err);

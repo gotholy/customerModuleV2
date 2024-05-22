@@ -1,56 +1,72 @@
 import { defineStore } from 'pinia'
+import { useApi,useApiPrivate } from '../composables/useApi.js'
+
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: {
       id: 0,
-      username: "",
       email: "",
-      first_name: "",
-      last_name: "",
-      full_name: "",
+      firstName: "",
+      lastName: "",
     },
     accessToken: "",
     authReady: false,
   }),
-
   getters: {
     userDetail: (state) => state.user,
-    isAuthenticated: (state) => !!state.accessToken,
+    isAuthenticated: (state) => state.accessToken ? true : false
   },
   actions: {
-    async login(email, password) {
+    async attempt(){
       try {
-        // const response = await fetch('http://localhost:7777/api/auth/login', {
-        //   method: 'POST',
-        //   headers: {
-        //     'Content-Type': 'application/json'
-        //   },
-        //   body: JSON.stringify({ email, password })
-        // })
+        await this.refresh()
+        await this.getUser()
+      } catch (error) {
+        throw error
+      }
+      return
+    },
+    async login(loginData) {
+      try {
+        const {data} = await useApi().post(`/api/auth/login`, loginData);
+        this.accessToken = data.access_token
+        await this.getUser()
+        return data
       }catch (error) {
+        if (error.response) {
+          throw new Error(error.response.data.message);
+        } else {
+          throw error;
+        }
       }
     },
     async getUser() {
       try {
-        // const {data} = await fetch(`http://localhost:7777/api/auth/actualUser`, {
-        //   method: 'GET',
-        //   headers: {
-        //     'Authorization': `Bearer ${this.accessToken}`
-        //   }
-        // });
+        const {data} = await useApiPrivate().get(`/api/auth/actualUser`);
+        this.user = data
       } catch (error) { 
+        return error
       }
     },
     async logout(){
-      // await fetch('http://localhost:7777/api/auth/logout', {
-      //           method: 'POST',
-      //         });
+      try {
+        const {data} = await useApiPrivate().post(`/api/auth/logout`);
+        this.accessToken = ""
+        this.user = {}
+        return data
+      } catch (error) {
+        throw error
+      }
     },
     async refresh(){
-      // await fetch('http://localhost:7777/api/auth/logout', {
-      //           method: 'POST',
-      //         });
+      try {
+        const {data} = await useApi().post(`/api/auth/refresh`);
+        this.accessToken = data?.access_token
+        return data
+      } catch (error) {
+        throw error
+      }
     },
   },
 })

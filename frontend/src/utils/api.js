@@ -1,8 +1,7 @@
 import axios from "axios";
-import { API_URI } from "./config.js";
 
-const api = axios.create({
-    baseURL: API_URI,
+export const api = axios.create({
+    baseURL: import.meta.env.VITE_API_URI,
     timeout: 1000,
     headers: {
         "Content-Type": "application/json; charset=utf-8",
@@ -10,5 +9,3 @@ const api = axios.create({
     },
     withCredentials: true
 });
-
-export default api;
