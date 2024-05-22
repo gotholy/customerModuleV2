@@ -11,15 +11,15 @@
 </template>
 
 <script setup>
-import Aside from '../components/aside.vue'
-import Main from '../components/main.vue'
+// import Aside from '../components/aside.vue'
+// import Main from '../components/main.vue'
 
 </script>
 
 <style scoped>
-.container {
+/* .container {
   display: flex;
   margin: 0;
   padding: 0;
-}
+} */
 </style>

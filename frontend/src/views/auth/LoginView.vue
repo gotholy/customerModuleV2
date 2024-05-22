@@ -37,7 +37,7 @@
   async function handleSubmit(){
   try {
     await authStore.login(loginData)
-    router.replace({name: "user"})
+    router.replace({name: "customer"})
   } catch(error) {
     errorMessage.value = error.message
   }

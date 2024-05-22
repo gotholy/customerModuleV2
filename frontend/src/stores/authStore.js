@@ -23,7 +23,7 @@ export const useAuthStore = defineStore("auth", {
         await this.refresh()
         await this.getUser()
       } catch (error) {
-        return error
+        throw error
       }
       return
     },
@@ -34,7 +34,11 @@ export const useAuthStore = defineStore("auth", {
         await this.getUser()
         return data
       }catch (error) {
-        throw error
+        if (error.response) {
+          throw new Error(error.response.data.message);
+        } else {
+          throw error;
+        }
       }
     },
     async getUser() {
@@ -42,7 +46,7 @@ export const useAuthStore = defineStore("auth", {
         const {data} = await useApiPrivate().get(`/api/auth/actualUser`);
         this.user = data
       } catch (error) { 
-        throw error
+        return error
       }
     },
     async logout(){

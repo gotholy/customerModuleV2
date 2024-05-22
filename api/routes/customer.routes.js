@@ -2,6 +2,7 @@ import express from "express"
 import { getCustomers, getCustomerById, updateCustomerById, deleteCustomerById} from "../controllers/customer.controller.js"
 import {upload, uploadCustomersCSV} from "../controllers/csvUpload.controller.js"
 import { verifyUser } from "../utils/verify.js"
+
 const router = express.Router()
 
 //CREATE

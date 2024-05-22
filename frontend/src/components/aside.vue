@@ -1,86 +1,81 @@
 <template>
-    <aside class="aside">
-      <template v-if="isAuthenticated">
-      <h3>{{ user.first_name }} {{ user.last_name }}</h3>
-      <p>Letzter Login: 13.05.2024, 10:32 Uhr</p>
-    </template>
-    <template v-else>
-      <p>Bitte melden Sie sich an, um auf diese Seite zuzugreifen.</p>
-      <button type="button" class="btn" @click="login">Login</button>
-    </template>
+    <aside class="aside" >
+    <h1 class="customerTitle">Customer CSV uploads</h1>
     <div class="uploadContainer">
-        <div class="uploadBtnContainer">
-            <button type="button" class="btn">Upload Customer</button>
+        <div class="uploadBtnContainer uploadCustomerContainer">
+          <input type="file" @change="uploadCustomers($event.target.files)">
         </div> 
-        <div class="uploadBtnContainer">
-          <button type="button" class="btn">Upload Contact</button>
+        <div class="uploadBtnContainer uploadAddressContainer">
+          <input type="file" @change="uploadAddresses($event.target.files)">
         </div> 
-        <div class="uploadBtnContainer">
-          <button type="button" class="btn">Upload Adresses</button>
+        <div class="uploadBtnContainer uploadContactContainer">
+          <input type="file" @change="uploadContacts($event.target.files)">
         </div> 
-        <button type="button" class="btn btn-primary" @click="logout">Logout</button>
     </div>
+    <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
     </aside>
 </template>
 
 <script setup>
-import { useAuthStore } from '../stores/authStore.js';
-import { computed } from 'vue';
-import router from '../router/index.js';
+import { useCustomerStore } from '../stores/customerStore'
+import { ref } from 'vue'
 
+const customerStore = useCustomerStore()
+let errorMessage = ref(null)
 
-const authStore = useAuthStore();
-
-const user = computed(()=>{
-  return authStore.user
-})
-const isAuthenticated = computed(()=>{
-  return authStore.isAuthenticated
-})
-
-
-const logout = async () => {
-  try {
-    await authStore.logout()
-    .then( res => {
-      router.push({ name: 'login' })
+const uploadCustomers = (files) => {
+  if (files.length > 0) {
+    const file = files[0];
+    customerStore.uploadCustomers(file)
+    .catch((error) => {
+      errorMessage.value = error.message
     })
-  } catch (err) {
-    console.log(err.message);
   }
-};
-const login = () => {
-  router.push({ name: 'login' });
-};
+}
+
+const uploadAddresses = (files) => {
+  try {
+    if (files.length > 0) {
+    const file = files[0];
+    customerStore.uploadAddresses(file)
+  }
+  } catch(error) {
+    errorMessage.value = error.message
+  }
+}
+
+
+const uploadContacts = (files) => {
+  if (files.length > 0) {
+    const file = files[0];
+    customerStore.uploadContacts(file)
+    .catch((error) => {
+      errorMessage.value = error.message
+    })
+  }
+}
+
 </script>
 
   
 <style scoped>
-.aside {
-    background-color: #2966e8a4; 
-    width: 20vw;
-    height: 100vh;
-    padding: 0.5vh 1vw 0.5vw 1vw;
+.aside{
+  height: 94vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-h1{
-    font-size: 1.5rem;
-    margin-bottom: 4vh;
-    color: aliceblue;
-}
-h3{
-  color: aliceblue;
-}
-p{
-  color: aliceblue;
+.customerTitle{
+  font-size: 1.4rem;
 }
 .uploadBtnContainer{
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    height: 18vh;
-    width: 18vw;
+    align-items: center;
+    height: 15vh;
+    width: 15vw;
     background-color: aliceblue;
-    margin-bottom: 2vh;
-    padding-top: 2vh;
+    margin: 2vh;
+    padding: 2vh;
 }
 </style>
