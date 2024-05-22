@@ -11,6 +11,7 @@ git clone https://github.com/IhrGitHubBenutzername/CustomerModul.git
 Navigieren Sie zum Repository-Ordner:
 
 cd CustomerModulV2
+
 Schauen Sie die .env.example Dateie an und Ergänzen sie Ihre .env Dateien um die nötigen Daten. 
 
 Starten Sie die Anwendung:
@@ -18,6 +19,7 @@ Starten Sie die Anwendung:
 docker-compose up
 
 Verwendung
+
 Nachdem Sie die Anwendung gestartet haben, können Sie auf das Frontend zugreifen, indem Sie Ihren Webbrowser öffnen und die folgende URL eingeben:
 
 http://localhost:
