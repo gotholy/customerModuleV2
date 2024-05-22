@@ -9,13 +9,14 @@ export const useAuthStore = defineStore("auth", {
       email: "",
       firstName: "",
       lastName: "",
+      formattedUpdatedAt: "",
     },
     accessToken: "",
     authReady: false,
   }),
   getters: {
     userDetail: (state) => state.user,
-    isAuthenticated: (state) => state.accessToken ? true : false
+    isAuthenticated: (state) => state.accessToken ? true : false   
   },
   actions: {
     async attempt(){
@@ -44,7 +45,8 @@ export const useAuthStore = defineStore("auth", {
     async getUser() {
       try {
         const {data} = await useApiPrivate().get(`/api/auth/actualUser`);
-        this.user = data
+        const formattedUpdatedAt = new Date(data.updated_at).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        this.user = { ...data, updated_at: formattedUpdatedAt };
       } catch (error) { 
         return error
       }

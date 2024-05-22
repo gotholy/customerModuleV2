@@ -1,19 +1,22 @@
 <template>
-    <aside class="aside" >
+  <aside class="aside">
     <h1 class="customerTitle">Customer CSV uploads</h1>
     <div class="uploadContainer">
-        <div class="uploadBtnContainer uploadCustomerContainer">
-          <input type="file" @change="uploadCustomers($event.target.files)">
-        </div> 
-        <div class="uploadBtnContainer uploadAddressContainer">
-          <input type="file" @change="uploadAddresses($event.target.files)">
-        </div> 
-        <div class="uploadBtnContainer uploadContactContainer">
-          <input type="file" @change="uploadContacts($event.target.files)">
-        </div> 
+      <div class="uploadBtnContainer uploadCustomerContainer">
+        <label for="customerFile">Upload customer</label>
+        <input type="file" id="customerFile" @change="uploadCustomers($event.target.files)">
+      </div>
+      <div class="uploadBtnContainer uploadContactContainer">
+        <label for="contactFile">Upload contact persons</label>
+        <input type="file" id="contactFile" @change="uploadContacts($event.target.files)">
+      </div>
+      <div class="uploadBtnContainer uploadAddressContainer">
+        <label for="addressFile">Upload addresses</label>
+        <input type="file" id="addressFile" @change="uploadAddresses($event.target.files)">
+      </div>
     </div>
     <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
-    </aside>
+  </aside>
 </template>
 
 <script setup>
@@ -36,14 +39,13 @@ const uploadCustomers = (files) => {
 const uploadAddresses = (files) => {
   try {
     if (files.length > 0) {
-    const file = files[0];
-    customerStore.uploadAddresses(file)
-  }
+      const file = files[0];
+      customerStore.uploadAddresses(file)
+    }
   } catch(error) {
     errorMessage.value = error.message
   }
 }
-
 
 const uploadContacts = (files) => {
   if (files.length > 0) {
@@ -54,10 +56,8 @@ const uploadContacts = (files) => {
     })
   }
 }
-
 </script>
 
-  
 <style scoped>
 .aside{
   height: 94vh;
@@ -67,15 +67,32 @@ const uploadContacts = (files) => {
 }
 .customerTitle{
   font-size: 1.4rem;
+  color: aliceblue;
 }
 .uploadBtnContainer{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 15vh;
-    width: 15vw;
-    background-color: aliceblue;
-    margin: 2vh;
-    padding: 2vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 15vh;
+  width: 15vw;
+  background-color: aliceblue;
+  margin: 2vh;
+  padding: 2vh;
+}
+.uploadBtnContainer input[type="file"] {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+.uploadBtnContainer label {
+  font-size: 1.2rem;
+  color: #333;
+  cursor: pointer;
+}
+.uploadBtnContainer label:hover {
+  color: #666;
 }
 </style>

@@ -81,7 +81,6 @@ import { computed, onMounted, ref, nextTick } from 'vue'
 
 const customerStore = useCustomerStore()
 
-// Define customers variable
 const customers = computed(() => customerStore.customers)
 const loading = computed(() => customerStore.loading)
 const error = computed(() => customerStore.error)
@@ -98,9 +97,7 @@ async function deleteCustomer(id) {
 }
 
 function showConfirmDeleteModal(id) {
-  // Set the id of the customer to be deleted
   customerIdToDelete.value = id
-  // Show the modal
   nextTick(() => {
     const modal = new Modal(document.getElementById('confirmDeleteModal'))
     modal.show()
@@ -111,6 +108,7 @@ onMounted(async () => {
     await getCustomers()
 })
 </script>
+
 <style scoped> 
 #id {
   display: flex;
@@ -125,7 +123,7 @@ onMounted(async () => {
 .section{ 
     background-color: aliceblue; 
     width: 100vw; 
-    padding: 1vh 2vw;
+    padding: 4vh 2vw;
     display: flex;
     flex-direction: column;
     margin-bottom: 10vh;

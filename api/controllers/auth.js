@@ -37,6 +37,7 @@ export const login = async (req, res, next)=> {
     )
   
     user.refresh_token = refreshToken
+    user.updated_at = new Date()
     await user.save()
   
     res.cookie('refresh_token', refreshToken, {httpOnly: true, sameSite: 'None', secure: true, maxAge: 24*60*60*1000})
@@ -82,6 +83,7 @@ export const logout = async (req, res, next) => {
   export const getLoggedInUser = async (req, res, next) => {
     try {
       const user = req.userFound
+      console.log(user);
       return res.status(200).json(user)
     } catch (err) {
        next(err)

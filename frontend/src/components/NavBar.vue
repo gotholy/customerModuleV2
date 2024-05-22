@@ -4,8 +4,8 @@
     <div class="collapse navbar-collapse" id="appNavbar">
       <ul class="navbar-nav mb-2 mb-lg-0 loginLogout">
         <li v-if="isAuthenticated" class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            {{ user.firstName }} {{ user.lastName }}
+          <a class="nav-link dropdown-toggle username" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ user.firstName }} {{ user.lastName }} <br/> last login: {{ user.updated_at }}
           </a>
           <ul class="dropdown-menu">
             <li><router-link :to="{name: 'user'}" class="dropdown-item">Profile</router-link></li>
@@ -57,5 +57,8 @@ async function logout(){
 <style scoped>
 .custom-navbar {
   background-color: none;
+}
+.username{
+  color: aliceblue;
 }
 </style>
